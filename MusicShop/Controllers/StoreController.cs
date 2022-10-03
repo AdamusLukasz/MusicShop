@@ -22,5 +22,12 @@ namespace MusicShop.Controllers
 
             return View(genreModel);
         }
+        // GET: /Store/Details
+        public ActionResult Details(int id)
+        {
+            var album = _context.Albums.Find(id);
+
+            return View(album);
+        }
     }
 }

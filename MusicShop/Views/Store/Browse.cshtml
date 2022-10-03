@@ -7,7 +7,7 @@
     @foreach (var album in Model.Albums)
     {
         <li>
-            @album.Title
+            @Html.ActionLink(album.Title, "Details", new { id = album.Id })
         </li>
     }
 </ul>
