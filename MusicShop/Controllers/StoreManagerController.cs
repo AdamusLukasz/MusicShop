@@ -12,12 +12,7 @@ namespace MusicShop.Controllers
 {
     public class StoreManagerController : Controller
     {
-        private readonly MusicShopContext _context;
-
-        public StoreManagerController(MusicShopContext context)
-        {
-            _context = context;
-        }
+        private readonly MusicShopContext _context = new MusicShopContext();
 
         // GET: StoreManager
         public async Task<IActionResult> Index()
