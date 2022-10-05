@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MusicShop.Models
 {
-    public class ShoppingCart
+    public partial class ShoppingCart
     {
         MusicShopContext storeDB = new MusicShopContext();
-        string ShoppingCartId { get; set; }
+        string? ShoppingCartId { get; set; }
         public const string CartSessionKey = "CartId";
         public static ShoppingCart GetCart(HttpContext context)
         {
@@ -23,7 +23,7 @@ namespace MusicShop.Models
             cart.ShoppingCartId = cart.GetCartId(context);
             return cart;
         }
-        // Helper method to simplify shopping cart calls
+        //Helper method to simplify shopping cart calls
         public static ShoppingCart GetCart(Controller controller)
         {
             return GetCart(controller.HttpContext);
@@ -154,8 +154,29 @@ namespace MusicShop.Models
         // We're using HttpContextBase to allow access to cookies.
         public string GetCartId(HttpContext context)
         {
-            return context.Session.ToString();
-            //return context.Session(CartSessionKey).ToString();
+            var session = context.Session;
+
+            if (!session.Keys.Contains(CartSessionKey))
+            {
+
+                var userName = context.User.Identity.Name;
+
+                if (!string.IsNullOrWhiteSpace(userName))
+                {
+                    session.SetString(CartSessionKey, userName);
+                }
+                else
+                {
+                    // Generate a new random GUID using System.Guid class
+                    Guid tempCartId = Guid.NewGuid();
+                    // Send tempCartId back to client as a cookie
+                    session.SetString(CartSessionKey, tempCartId.ToString());
+                }
+
+            }
+
+            return session.GetString(CartSessionKey);
+
         }
         // When a user has logged in, migrate their shopping cart to
         // be associated with their username
